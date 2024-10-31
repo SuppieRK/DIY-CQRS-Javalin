@@ -78,7 +78,7 @@ dependencies {
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
 
 	// https://mvnrepository.com/artifact/org.testcontainers/postgresql
-	testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.2'
+	testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.3'
 
 	// https://mvnrepository.com/artifact/org.awaitility/awaitility
 	testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.2'
