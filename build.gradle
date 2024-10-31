@@ -62,7 +62,7 @@ dependencies {
 	implementation group: 'org.flywaydb', name: 'flyway-core', version: '10.19.0'
 
 	// https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql
-	implementation group: 'org.flywaydb', name: 'flyway-database-postgresql', version: '10.19.0'
+	implementation group: 'org.flywaydb', name: 'flyway-database-postgresql', version: '10.20.1'
 
 	// https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
 	implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.13.2'
