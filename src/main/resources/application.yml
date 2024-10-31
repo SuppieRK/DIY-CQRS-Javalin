@@ -1,0 +1,12 @@
+server:
+  port: ${PORT:=8080}
+
+database:
+  read-write:
+    url: jdbc:postgresql://${RW_DB_HOST}:${RW_DB_PORT:=5432}/${RW_DB_DATABASE}?loggerLevel=OFF
+    username: ${RW_DB_USERNAME}
+    password: ${RW_DB_PASSWORD}
+  read-only:
+    url: jdbc:postgresql://${RO_DB_HOST}:${RO_DB_PORT:=5432}/${RO_DB_DATABASE}?loggerLevel=OFF
+    username: ${RO_DB_USERNAME}
+    password: ${RO_DB_PASSWORD}

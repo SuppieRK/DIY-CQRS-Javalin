@@ -1,0 +1,80 @@
+services:
+
+  db:
+    image: 'postgres:16'
+    container_name: 'postgres'
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: 'password'
+    volumes:
+      - ./docker-compose/sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+      timeout: 1s
+      retries: 15
+
+  service:
+    image: 'cqrs-javalin'
+    container_name: 'service'
+    ports:
+      - '8080:8080'
+    environment:
+      PORT: '8080'
+      RW_DB_HOST: 'db'
+      RW_DB_PORT: '5432'
+      RW_DB_DATABASE: 'local'
+      RW_DB_USERNAME: 'postgres'
+      RW_DB_PASSWORD: 'password'
+      RO_DB_HOST: 'db'
+      RO_DB_PORT: '5432'
+      RO_DB_DATABASE: 'local'
+      RO_DB_USERNAME: 'postgres'
+      RO_DB_PASSWORD: 'password'
+      JAVA_TOOL_OPTIONS: '-Xmx2048m'
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: '2G'
+        reservations:
+          cpus: '2'
+          memory: '2G'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # See https://javalin.io/tutorials/prometheus-example
+  # See https://github.com/docker/awesome-compose/tree/master/prometheus-grafana
+  prometheus:
+    image: 'prom/prometheus'
+    container_name: 'prometheus'
+    ports:
+      - '9090:9090'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - ./docker-compose/prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    depends_on:
+      db:
+        condition: service_healthy
+
+  grafana:
+    image: 'grafana/grafana'
+    container_name: 'grafana'
+    ports:
+      - '3000:3000'
+    environment:
+      GF_SECURITY_ADMIN_USER: 'admin'
+      GF_SECURITY_ADMIN_PASSWORD: 'grafana'
+      GF_LOG_LEVEL: 'warn'
+    volumes:
+      - ./docker-compose/grafana:/etc/grafana/provisioning/datasources
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  prom_data:

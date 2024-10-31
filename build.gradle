@@ -1,0 +1,197 @@
+import java.nio.charset.StandardCharsets
+
+plugins {
+	// IDE
+	id 'idea'
+
+	// Language
+	id 'java'
+
+	// https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
+	id 'com.google.cloud.tools.jib' version '3.3.2'
+
+	// https://github.com/SuppieRK/jooq-java-class-generator
+	id 'io.github.suppierk.jooq-java-class-generator' version '1.0.1'
+
+	// Utility
+	id 'jacoco'
+	id 'com.diffplug.spotless' version '6.25.0'
+}
+
+group = 'io.github.suppie.ddd.javalin'
+version = 'latest'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation group: 'io.github.suppierk.ddd', name: 'cqrs', version: '1.319.0'
+
+	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-core
+	implementation group: 'com.github.gestalt-config', name: 'gestalt-core', version: '0.32.2'
+
+	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-yaml
+	implementation group: 'com.github.gestalt-config', name: 'gestalt-yaml', version: '0.32.2'
+
+	// https://mvnrepository.com/artifact/io.javalin/javalin-bundle
+	implementation group: 'io.javalin', name: 'javalin-bundle', version: '6.3.0'
+
+	// https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-openapi-plugin
+	implementation group: 'io.javalin.community.openapi', name: 'javalin-openapi-plugin', version: '6.3.0'
+
+	// https://mvnrepository.com/artifact/io.javalin.community.openapi/openapi-annotation-processor
+	annotationProcessor group: 'io.javalin.community.openapi', name: 'openapi-annotation-processor', version: '6.3.0'
+
+	// https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-swagger-plugin
+	implementation group: 'io.javalin.community.openapi', name: 'javalin-swagger-plugin', version: '6.3.0'
+
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jdk8
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.17.2'
+
+	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+	implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.0.0'
+
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
+
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	jooqGenerator group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
+
+	// https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+	implementation group: 'org.flywaydb', name: 'flyway-core', version: '10.19.0'
+
+	// https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql
+	implementation group: 'org.flywaydb', name: 'flyway-database-postgresql', version: '10.19.0'
+
+	// https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
+	implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.13.2'
+
+	// To avoid compilation warnings
+	// https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api
+	implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.2'
+
+	// https://mvnrepository.com/artifact/org.junit/junit-bom
+	testImplementation enforcedPlatform(group: 'org.junit', name: 'junit-bom', version: '5.11.2')
+
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
+
+	// https://mvnrepository.com/artifact/org.testcontainers/postgresql
+	testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.2'
+
+	// https://mvnrepository.com/artifact/org.awaitility/awaitility
+	testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.2'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17.toString()
+	targetCompatibility = JavaVersion.VERSION_17.toString()
+	compileJava.options.encoding = StandardCharsets.UTF_8.name()
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+// Configure several tasks additionally for Gradle
+test {
+	useJUnitPlatform()
+
+	// Report is always generated after tests run
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	// Tests are required to run before generating the report
+	dependsOn test
+
+	reports {
+		html.required = true
+		xml.required = true
+		csv.required = false
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: 'io/github/suppierk/example/**')
+		}))
+	}
+}
+
+flyway {
+	driver = 'org.postgresql.Driver'
+	defaultSchema = 'public'
+}
+
+jooq {
+	version = '3.19.14'
+
+	configurations {
+		main {
+			generationTool {
+				logging = org.jooq.meta.jaxb.Logging.WARN
+
+				generator {
+					database {
+						name = 'org.jooq.meta.postgres.PostgresDatabase'
+						inputSchema = 'public'
+
+						// Optimistic locking feature
+						recordVersionFields = 'version'
+					}
+
+					generate {
+						fluentSetters = true
+					}
+
+					target {
+						packageName = 'io.github.suppierk.example'
+					}
+				}
+			}
+		}
+	}
+}
+
+jib {
+	from {
+		image = 'eclipse-temurin:17-alpine'
+	}
+}
+
+// Enable Spotless code formatting rules
+spotless {
+	java {
+		target '**/src/*/java/**/*.java'
+
+		// Aligns with Intellij IDEA default settings
+		toggleOffOn('@formatter:off', '@formatter:on')
+
+		googleJavaFormat()
+	}
+
+	sql {
+		target '**/src/*/resources/**/*.sql'
+
+		dbeaver().configFile('dbeaver.properties')
+	}
+
+	groovyGradle {
+		target '**/*.gradle'
+
+		greclipse()
+	}
+
+	lineEndings = 'UNIX'
+}
+
+// Configure several tasks additionally for Gradle
+tasks.withType(Copy).configureEach {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = StandardCharsets.UTF_8.name()
+	dependsOn(spotlessJavaCheck)
+}
