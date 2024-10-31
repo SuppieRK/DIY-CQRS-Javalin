@@ -2,6 +2,8 @@
 
 A sample project implementation using [DIY CQRS](https://github.com/SuppieRK/DIY-CQRS) library.
 
+Similar functionality implemented with Spring [available here](https://github.com/SuppieRK/DIY-CQRS-Spring-Counterpart).
+
 ## How to launch?
 
 ```shell
