@@ -59,7 +59,7 @@ dependencies {
 	jooqGenerator group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
 
 	// https://mvnrepository.com/artifact/org.flywaydb/flyway-core
-	implementation group: 'org.flywaydb', name: 'flyway-core', version: '10.19.0'
+	implementation group: 'org.flywaydb', name: 'flyway-core', version: '10.20.1'
 
 	// https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql
 	implementation group: 'org.flywaydb', name: 'flyway-database-postgresql', version: '10.19.0'
