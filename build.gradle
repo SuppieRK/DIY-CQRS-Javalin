@@ -182,8 +182,6 @@ spotless {
 
 		greclipse()
 	}
-
-	lineEndings = 'UNIX'
 }
 
 // Configure several tasks additionally for Gradle
