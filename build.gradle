@@ -32,7 +32,7 @@ dependencies {
 	implementation group: 'com.github.gestalt-config', name: 'gestalt-core', version: '0.32.2'
 
 	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-yaml
-	implementation group: 'com.github.gestalt-config', name: 'gestalt-yaml', version: '0.32.2'
+	implementation group: 'com.github.gestalt-config', name: 'gestalt-yaml', version: '0.33.0'
 
 	// https://mvnrepository.com/artifact/io.javalin/javalin-bundle
 	implementation group: 'io.javalin', name: 'javalin-bundle', version: '6.3.0'
