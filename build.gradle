@@ -65,7 +65,7 @@ dependencies {
 	implementation group: 'org.flywaydb', name: 'flyway-database-postgresql', version: '10.20.1'
 
 	// https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
-	implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.13.2'
+	implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.13.6'
 
 	// To avoid compilation warnings
 	// https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api
