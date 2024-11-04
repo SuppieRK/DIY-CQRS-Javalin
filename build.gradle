@@ -8,7 +8,7 @@ plugins {
 	id 'java'
 
 	// https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
-	id 'com.google.cloud.tools.jib' version '3.3.2'
+	id 'com.google.cloud.tools.jib' version '3.4.4'
 
 	// https://github.com/SuppieRK/jooq-java-class-generator
 	id 'io.github.suppierk.jooq-java-class-generator' version '1.0.1'
